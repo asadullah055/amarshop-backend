@@ -1,7 +1,7 @@
 //body lib import
 const express = require('express')
 const app = express()
-const path = require('path')
+
 
 
 // security Middleware lib import
@@ -16,6 +16,7 @@ dotenv.config()
 // database import 
 
 const mongoose = require('mongoose')
+const router = require('./src/router/api')
 
 // security middleware implement
 app.use(cors())
@@ -30,16 +31,13 @@ const limiter = ratelimit({windowMs: 15 * 60 * 1000, max:3000})
 app.use(limiter)
 app.use(express.urlencoded({ extended: true }))
 
+app.use('/', router)
 // database connection
 mongoose
   .connect(process.env.MONGOURL)
   .then(() => console.log("Database connection successfully"))
   .catch((error => console.log(error)));
 
-  //frontend router define
-app.use(express.static('client/dist'))
-  app.get("*", function(req, res){
-    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
-  })
+
 
   module.exports = app
